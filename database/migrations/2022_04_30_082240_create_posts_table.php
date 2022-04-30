@@ -12,13 +12,10 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('link');
-            $table->string('author_name');
-            $table->foreignId('user_id')
+            $table->foreignId('author_id')
                     ->constrained('users')
-                    ->onUpdate('cascade')
                     ->onDelete('cascade');
-            $table->timestamp('creation_date');
-            $table->timestamp('updated_at');
+            $table->timestamps();
             $table->softDeletes();
 
         });
