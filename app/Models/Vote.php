@@ -10,7 +10,7 @@ class Vote extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = ['status'];
+    protected $guarded = ['id'];
 
 
 

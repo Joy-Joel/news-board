@@ -2,20 +2,42 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
+use App\Models\Comment;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property string $title
+ * @property string $link
+ * @property int $author_id
+ * @property CarbonInterface $created_at
+ * @property CarbonInterface $updated_at
+ */
 class Post extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+
+    protected $guarded = ['id'];
 
     /**
-     * Get the comments for the news post.
-     */
-
-    public function comments()
+    * Get the comments for the news post.
+    */
+    public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
+    }
+
+    /**
+    * Get the author for the news post.
+    */
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
 }
