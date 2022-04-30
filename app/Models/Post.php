@@ -39,4 +39,12 @@ class Post extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+    * Get the votes for the news post.
+    */
+    public function votes(): HasMany
+    {
+        return $this->hasMany(Votes::class);
+    }
+
 }

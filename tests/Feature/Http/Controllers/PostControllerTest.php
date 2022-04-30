@@ -85,6 +85,12 @@ class PostControllerTest extends TestCase
         $response = $this->deleteJson('/api/post/delete', [
             'post_id' => $post->id
         ]);
+        $this->assertDatabaseHas('posts',
+            [
+                'id' => $post->id,
+                'title'=> $post->title
+            ]
+            );
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 }
