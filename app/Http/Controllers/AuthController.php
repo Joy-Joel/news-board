@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\LoginRequest;
+use Exception;
 use App\Models\User;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Exception;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-
-
 
     public function userRegister(Request $request)
     {
@@ -39,24 +40,22 @@ class AuthController extends Controller
     }
 
    //  For User login
-   public function userLogin(Request $request)
+   public function userLogin(LoginRequest $request)
    {
+        $request->validated();
 
-       try {
+        if (!Auth::attempt($request->only(['email', 'password']))) {
+            return new JsonResponse([], Response::HTTP_BAD_REQUEST);
+        }
+        $token = $request->user()->createToken('authorize');
 
-           if (!Auth::attempt($request->only(['user', 'password']))) {
-               return $this->error('Credentials not match', 401);
-           }
-
-           return $this->success([
-               'message'=>'Logged In Successfully!',
-               'data'=> [
-                   'user'=> $request->user(),
-               ]
-           ]);
-       } catch (Exception $e) {
-           return $e->getMessage();
-       }
+        return new JsonResponse(
+            [
+                'data' => [
+                    'token' => $token->plainTextToken,
+                ],
+            ], Response::HTTP_OK
+        );
    }
 
 
