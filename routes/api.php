@@ -26,9 +26,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/register',  [AuthController::class, 'userRegister']);
 Route::post('/login',     [AuthController::class, 'userLogin']);
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/post',   [PostController::class, 'createPost']);
-    Route::get('/posts',    [PostController::class, 'getAllPost']);
-    Route::put('/update',   [PostController::class, 'updatePost'])->middleware('isPostOwner');
-    Route::delete('/delete',   [PostController::class, 'deletePost'])->middleware('isPostOwner');
+Route::middleware(['auth:sanctum','isPostOwner'])->prefix('post')->group(function () {
+    Route::post('/', [PostController::class, 'createPost'])
+            ->withoutMiddleware('isPostOwner');
+    Route::get('/', [PostController::class, 'getAllPost'])
+            ->withoutMiddleware('isPostOwner');
+    Route::put('/update', [PostController::class, 'updatePost']);
+    Route::delete('/delete', [PostController::class, 'deletePost']);
 });
