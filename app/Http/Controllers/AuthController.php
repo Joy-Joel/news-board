@@ -2,45 +2,46 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginRequest;
 use Exception;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\CreateAccountRequest;
 
 class AuthController extends Controller
 {
 
-    public function userRegister(Request $request)
+    public function userRegister(CreateAccountRequest $request): JsonResponse
     {
-        //User Registration
-        $validator = Validator::make($request->all(), [
-
-            'username' => 'required|string|max:255',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
-        try {
+        $request->validated();
             $registerUser = User::create([
-                'username'  => $request->username,
-                'password' => Hash::make($request->password),
+                'username'  => $request->get('username'),
+                'password' => Hash::make($request->get('password')),
             ]);
-            $registerUser->save();
-            return $this->success([
-                'status'    => '200',
-                'message'   => 'User Registered',
-            ]);
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
 
+            if(!$registerUser->save()) {
+                Log::error(
+                    'failed to create user account',
+                    [
+                        'payload' => $request->except('password'),
+                    ]
+                    );
+                return new JsonResponse(null, Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            return new JsonResponse([
+                'message' => 'Registration Successful'
+            ], Response::HTTP_CREATED);
     }
 
    //  For User login
-   public function userLogin(LoginRequest $request)
+   public function userLogin(LoginRequest $request): JsonResponse
    {
         $request->validated();
 
@@ -60,27 +61,15 @@ class AuthController extends Controller
 
 
     // User Logout
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
-        try {
+        $request->user()->currentAccessToken()->delete();
+        return [
 
-            return [
-                'message' => 'Token Revoked!!!'
-            ];
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
+        ];
+        return new JsonResponse([
+            'message' => 'Logout Successful'
+        ], Response::HTTP_OK);
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

@@ -4,18 +4,15 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\Post;
+use App\Models\Vote;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getAllPost()
+    public function getAllPost(): JsonResponse
     {
         $allPost = Post::with('comments')
             ->paginate(10);
@@ -24,12 +21,7 @@ class PostController extends Controller
         ], Response::HTTP_ACCEPTED);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function createPost(Request $request)
+    public function createPost(Request $request): JsonResponse
     {
         // For Creating News Post
 
@@ -43,19 +35,13 @@ class PostController extends Controller
                 'message' => 'Post created successfully!!'
             ], Response::HTTP_CREATED);
         }
-            return response()->json([
-                'message' => 'Not successful'
-            ], Response::HTTP_BAD_REQUEST);
+        return response()->json([
+            'message' => 'Not successful'
+        ], Response::HTTP_BAD_REQUEST);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function updatePost(Request $request)
+
+    public function updatePost(Request $request): JsonResponse|Exception
     {
         try {
             $updatePost = Post::where('id', $request->post_id)->update([
@@ -68,33 +54,36 @@ class PostController extends Controller
                 ], Response::HTTP_OK);
             }
             return response()->json([
-                'message'=> 'Post has not been Updated'
+                'message' => 'Post has not been Updated'
             ], Response::HTTP_BAD_REQUEST);
         } catch (Exception $e) {
             return $e->getMessage();
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function deletePost(Request $request)
+    public function deletePost(Request $request): JsonResponse
     {
-        try {
-            $deletePost = Post::where('id', $request->post_id)->delete();
-            if ($deletePost) {
-                return response()->json([
-                    'message' => 'Post was successfully deleted'
-                ], Response::HTTP_OK);
-            }
-        } catch (Exception $e) {
+        $deletePost = Post::where('id', $request->post_id)->delete();
+        if ($deletePost) {
             return response()->json([
-                'success' => false,
-                'message' => 'Post not deleted',
-            ], Response::HTTP_BAD_REQUEST);
+                'message' => 'Post was successfully deleted'
+            ], Response::HTTP_OK);
         }
+        return response()->json([
+            'success' => false,
+            'message' => 'Post not deleted',
+        ], Response::HTTP_BAD_REQUEST);
     }
+
+    public function upvotePost($post_id)
+    {
+        $vote = new Vote([
+            'vote'
+        ]);
+    }
+
+    // public function upvotePost()
+    // {
+
+    // }
 }
