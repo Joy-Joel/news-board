@@ -40,7 +40,7 @@ class PostController extends Controller
         ]);
         if ($createPost->save()) {
             return response()->json([
-                'message' => 'Post created successfully !!'
+                'message' => 'Post created successfully!!'
             ], Response::HTTP_CREATED);
         }
             return response()->json([
@@ -65,7 +65,7 @@ class PostController extends Controller
             if ($updatePost) {
                 return response()->json([
                     'message' => ' News Post successfully Updated!!'
-                ], Response::HTTP_ACCEPTED);
+                ], Response::HTTP_OK);
             }
             return response()->json([
                 'message'=> 'Post has not been Updated'

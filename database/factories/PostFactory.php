@@ -15,7 +15,7 @@ class PostFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->title(),
+            'title' => $this->faker->realText(20),
             'link' => $this->faker->url(),
         ];
     }
