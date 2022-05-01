@@ -12,7 +12,7 @@ class CommentFactory extends Factory
     public function definition(): array
     {
         return [
-            'post_id' => 3,
+            // 'post_id' => 3,
             'content' => $this->faker->sentence,
         ];
     }

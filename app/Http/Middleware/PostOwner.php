@@ -20,12 +20,18 @@ class PostOwner
     public function handle(Request $request, Closure $next)
     {
         $post = Post::where('id', $request->post_id)->first();
-
-        if(Auth::user()->id !== $post->author_id) {
+        if(!empty($post)){
+            if(Auth::user()->id !== $post->author_id) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Unauthorised'
+                ], Response::HTTP_UNAUTHORIZED);
+            }
+        }else{
             return response()->json([
                 'status' => false,
-                'message' => 'Unauthorised'
-            ], Response::HTTP_UNAUTHORIZED);
+                'message' => 'Post doesnt exist'
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return $next($request);

@@ -11,7 +11,6 @@ use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\CreateAccountRequest;
 
 class AuthController extends Controller
@@ -23,6 +22,7 @@ class AuthController extends Controller
             $registerUser = User::create([
                 'username'  => $request->get('username'),
                 'password' => Hash::make($request->get('password')),
+
             ]);
 
             if(!$registerUser->save()) {
@@ -45,7 +45,7 @@ class AuthController extends Controller
    {
         $request->validated();
 
-        if (!Auth::attempt($request->only(['email', 'password']))) {
+        if (!Auth::attempt($request->only(['username', 'password']))) {
             return new JsonResponse([], Response::HTTP_BAD_REQUEST);
         }
         $token = $request->user()->createToken('authorize');
@@ -64,9 +64,7 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
-        return [
 
-        ];
         return new JsonResponse([
             'message' => 'Logout Successful'
         ], Response::HTTP_OK);
