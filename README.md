@@ -1,5 +1,5 @@
 # 
-You'll need the following installed on your system before you can start working on Iceberg.
+You'll need the following installed on your system to run this project.
 
 - [PHP 8.X](https://www.php.net/downloads) or above
 - [Composer](https://getcomposer.org)
