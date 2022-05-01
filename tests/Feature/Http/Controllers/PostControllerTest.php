@@ -1,19 +1,18 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Http\Controllers;
 
-use Exception;
 use Tests\TestCase;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class PostControllerTest extends TestCase
 {
     use RefreshDatabase;
+
     public function test_can_create_post(): void
     {
         $user = User::factory()->create();
@@ -52,7 +51,7 @@ class PostControllerTest extends TestCase
             ]
         );
         $this->assertDatabaseCount('posts', 0);
-        $response->assertStatus(Response::HTTP_OK);
+        $response->assertOk();
     }
 
     public function test_can_update_post(): void
@@ -62,15 +61,18 @@ class PostControllerTest extends TestCase
                 ->for($user, 'author')
                 ->create();
         Auth::login($user);
+
         $response = $this->putJson('/api/post/update', [
             'post_id' => $post->id,
-            'title' => 'im an edited post'
+            'title' => 'im an edited post',
+            'link' => 'http://foobar.eth'
         ]);
         $this->assertDatabaseHas(
             'posts',
             [
                 'id' => $post->id,
-                'title' => $post->title
+                'title' => 'im an edited post',
+                'link' => 'http://foobar.eth'
             ]
         );
         $response->assertStatus(Response::HTTP_OK);
@@ -82,6 +84,7 @@ class PostControllerTest extends TestCase
         $post = Post::factory()
                 ->for($owner, 'author')
                 ->create();
+
         $response = $this->deleteJson('/api/post/delete', [
             'post_id' => $post->id
         ]);
