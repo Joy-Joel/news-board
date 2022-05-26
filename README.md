@@ -17,3 +17,6 @@ This will run static analysis to make sure code is PSR compliant
 ```
 composer larastan
 ```
+
+### Deployment link
+- [Heroku] (https://news-board-developstoday.herokuapp.com/)
